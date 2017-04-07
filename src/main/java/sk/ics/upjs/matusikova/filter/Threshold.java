@@ -1,6 +1,7 @@
 package sk.ics.upjs.matusikova.filter;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.gui.binary.VisualizeBinaryData;
@@ -10,6 +11,9 @@ import boofcv.struct.image.GrayU8;
 
 public class Threshold {
 
+	public Threshold() {
+	}
+	
 	public BufferedImage computeOtsu(BufferedImage image, int idx1, int idx2) {
 		GrayF32 in = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
         GrayU8 bin = new GrayU8(in.width, in.height);
@@ -47,6 +51,4 @@ public class Threshold {
         
         return bufferedImage; 
 	}
-	
-	
 }

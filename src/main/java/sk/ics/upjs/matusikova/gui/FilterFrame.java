@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -37,6 +38,8 @@ public class FilterFrame {
 	private String photoDirPath;
 	private List<BufferedImage> bufferedImageList;
 	private List<String> name;
+	private BufferedImage labelImage;
+	private int index = -1;
     
 	/**
 	 * Launch the application.
@@ -82,6 +85,7 @@ public class FilterFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle("Filter");
 		frame.setBounds(100, 100, 725, 498);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -108,7 +112,7 @@ public class FilterFrame {
 		filterMenu = new JMenu("Filter");
 		menuBar.add(filterMenu);
 		
-		grayscaleMenuItem = new JMenuItem("GrayScale");
+		grayscaleMenuItem = new JMenuItem("Grayscale");
 		filterMenu.add(grayscaleMenuItem);
 		
 		thresholdMenuItem = new JMenuItem("Threshold");
@@ -148,6 +152,13 @@ public class FilterFrame {
 		
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(!photoListModel.isEmpty()) {
+					photoListModel.clear();
+					bufferedImageList.clear();
+					name.clear();
+					imageLabel.setIcon(new ImageIcon());
+				}
+				
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fileChooser.showOpenDialog((Component)e.getSource());		
 				loadPhotos();		
@@ -191,7 +202,8 @@ public class FilterFrame {
 		
 		thresholdMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ThresholdFrame threshold = new ThresholdFrame(bufferedImage, bufferedImageList, name);		
+				System.out.println(bufferedImageList.size());
+				ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
 				threshold.frame.setVisible(true);
 			}
 		});
@@ -225,14 +237,14 @@ public class FilterFrame {
 			setPhotoDirPath(chooserFile.getPath());
 			
 			for (String file : directory.list()) {
-				if (file.contains(".jpg") || file.contains(".JPG") || file.contains(".PNG")
-						|| file.contains(".jpeg") || file.contains(".png")) {
+				if (file.contains(".jpg") || file.contains(".JPG") || file.contains(".PNG") || file.contains(".png")) {
 					photoListModel.add(index, file);
 					index++;
 					
 					try {
-						bufferedImage = ImageIO.read(new File(file));
+						bufferedImage = ImageIO.read(new File(directory+File.separator+file));
 						bufferedImageList.add(bufferedImage);
+						name.add(file);
 					} catch (IOException e) {
 						System.out.println("Image cannot be load.");
 					}	
@@ -243,7 +255,7 @@ public class FilterFrame {
 	}
 	
 	private void setPhotoInLabel() {
-		int index = photoList.getSelectedIndex();
+		index = photoList.getSelectedIndex();
 
 		ListModel<String> model = photoList.getModel();
 		String photoName = model.getElementAt(index);
@@ -252,12 +264,12 @@ public class FilterFrame {
 		File imageFile = new File(photoPath);
 
 		try {
-			bufferedImage = ImageIO.read(imageFile);
+			labelImage = ImageIO.read(imageFile);
 		} catch (IOException e) {
 			System.out.println("Image cannot be load.");
 		}
 
-		ImageIcon image = new ImageIcon(bufferedImage);
+		ImageIcon image = new ImageIcon(labelImage);
 		Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
 				Image.SCALE_SMOOTH);
 		imageLabel.setIcon(new ImageIcon(img));

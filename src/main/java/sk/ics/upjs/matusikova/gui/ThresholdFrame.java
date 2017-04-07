@@ -3,6 +3,8 @@ package sk.ics.upjs.matusikova.gui;
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -12,9 +14,13 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import sk.ics.upjs.matusikova.filter.Threshold;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Component;
+
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -22,16 +28,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSlider;
 import java.awt.Font;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class ThresholdFrame {
 
 	public JFrame frame;
 	private Threshold threshold;
+	private JFileChooser fileChooser;
+	private File chooserDirectory;
+	private String pathToPhotos;
 	
 	//inputs
 	private static List<BufferedImage> bufferedImageList;
-	private static BufferedImage photo;
 	private static List<String> name;
+	private static int index;
 	
 	//outputs
 	private BufferedImage filteredPhoto;
@@ -44,7 +55,7 @@ public class ThresholdFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ThresholdFrame window = new ThresholdFrame(photo, bufferedImageList, name);
+					ThresholdFrame window = new ThresholdFrame(index, bufferedImageList, name);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,15 +67,18 @@ public class ThresholdFrame {
 	/**
 	 * Create the application.
 	 */
-	public ThresholdFrame(BufferedImage photo, List<BufferedImage> bufferedImageList, List<String> name) {
-		ThresholdFrame.photo = photo;
+	public ThresholdFrame(int index, List<BufferedImage> bufferedImageList, List<String> name) {
 		ThresholdFrame.bufferedImageList = bufferedImageList;
 		ThresholdFrame.name = name;
+		ThresholdFrame.index = index;
+		
+		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
+		threshold = new Threshold();
 		initialize();
 		
-		if(photo != null) {
-			displayPhoto(photo);
+		if(index != -1) {
+			displayPhoto(ThresholdFrame.bufferedImageList.get(index));
 		}	
 	}
 
@@ -73,6 +87,7 @@ public class ThresholdFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(219, 229, 245));
 		frame.setBounds(100, 100, 435, 490);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -108,13 +123,15 @@ public class ThresholdFrame {
 		frame.getContentPane().add(algorithmComboBox);
 		
 		applyRadioButton = new JRadioButton("Apply on current photo");
-		applyRadioButton.setBounds(165, 387, 157, 23);
+		applyRadioButton.setOpaque(false);
+		applyRadioButton.setBounds(10, 388, 157, 23);
 		frame.getContentPane().add(applyRadioButton);
 		buttonGroup.add(applyRadioButton);
 		applyRadioButton.setSelected(true);
 		
 		applyAllRadioButton = new JRadioButton("Apply on all photos");
-		applyAllRadioButton.setBounds(6, 387, 141, 23);
+		applyAllRadioButton.setOpaque(false);
+		applyAllRadioButton.setBounds(195, 388, 141, 23);
 		frame.getContentPane().add(applyAllRadioButton);
 		buttonGroup.add(applyAllRadioButton);
 		
@@ -155,36 +172,59 @@ public class ThresholdFrame {
 		lblScale.setBounds(195, 366, 46, 14);
 		frame.getContentPane().add(lblScale);
 		
-		JSlider slider = new JSlider();
-		slider.setBounds(258, 335, 100, 18);
-		frame.getContentPane().add(slider);
+		final JSlider radiusSlider = new JSlider();
+		radiusSlider.setValue(0);
+		radiusSlider.setOpaque(false);
+		radiusSlider.setBounds(258, 335, 100, 18);
+		frame.getContentPane().add(radiusSlider);
 		
-		JSlider slider_1 = new JSlider();
-		slider_1.setBounds(258, 363, 100, 18);
-		frame.getContentPane().add(slider_1);
+		final JSlider scaleSlider = new JSlider();
+		scaleSlider.setValue(0);
+		scaleSlider.setOpaque(false);
+		scaleSlider.setBounds(258, 363, 100, 18);
+		frame.getContentPane().add(scaleSlider);
 		
-		JSpinner spinner = new JSpinner();
-		spinner.setBounds(368, 335, 40, 18);
-		frame.getContentPane().add(spinner);
+		final JSpinner radiusSpinner = new JSpinner();
+		radiusSpinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		radiusSpinner.setBounds(368, 335, 40, 18);
+		frame.getContentPane().add(radiusSpinner);
 		
-		JSpinner spinner_1 = new JSpinner();
-		spinner_1.setBounds(368, 363, 40, 18);
-		frame.getContentPane().add(spinner_1);
+		final JSpinner scaleSpinner = new JSpinner();
+		scaleSpinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		scaleSpinner.setBounds(368, 363, 40, 18);
+		frame.getContentPane().add(scaleSpinner);
+		
+		/**
+		 * Component actions.
+		 */
+		scaleSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				scaleSpinner.setValue(scaleSlider.getValue());
+			}
+		});
+		
+		radiusSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				radiusSpinner.setValue(radiusSlider.getValue());
+			}
+		});
 		
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (applyRadioButton.isSelected()) {
 					returnImage();
+					frame.dispose();
 			    }
 				else if (applyAllRadioButton.isSelected()) {
 			    	returnAllImages();
+			    	frame.dispose();
 			    }
 			}
 		});
 		
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+				frame.dispose();
 			}
 		});
 		
@@ -194,19 +234,47 @@ public class ThresholdFrame {
 					filterImage();
 		        } 
 				else if (applyAllRadioButton.isSelected()) {
-		           filterAllImages();
+					filterAllImages();
 		        }	
 			}
 		});
 		
 		saveAsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.showOpenDialog((Component) arg0.getSource());
+				chooserDirectory = fileChooser.getSelectedFile();
+				File imageFile = null;	
+				pathToPhotos = chooserDirectory.getPath();
+				int i = 0;
 				
-				
+				if(chooserDirectory != null) {
+					if(applyAllRadioButton.isSelected()) {
+						for(BufferedImage photo : filteredImageList) {	
+							imageFile = new File(pathToPhotos+File.separator+name.get(i));
+							try {
+								ImageIO.write(photo, name.get(i).substring(name.get(i).length() - 3, name.get(i).length()), imageFile);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}	
+							i++;
+						}
+					} else {
+						imageFile = new File(pathToPhotos+File.separator+name.get(index));
+						try {
+							ImageIO.write(filteredPhoto, name.get(index).substring(name.get(index).length() - 3, name.get(index).length()), imageFile);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}	
+					}
+				}		
 			}
 		});
 	}
 	
+	/**
+	 * Other methods.
+	 */
 	public int getMaxSpinner() {
         return (Integer) maxSpinner.getValue();
     }
@@ -230,9 +298,8 @@ public class ThresholdFrame {
 		imageLabel.setIcon(new ImageIcon(img));
     }
     
-	private void filterImage() {  
-		filteredPhoto = photo;
-		
+	private void filterImage() {  	
+		filteredPhoto = bufferedImageList.get(index);
         if("Compute otsu".equals(algorithmComboBox.getSelectedItem().toString())) {
             filteredPhoto = threshold.computeOtsu(filteredPhoto, getMinSpinner(), getMaxSpinner());
         }
@@ -313,5 +380,6 @@ public class ThresholdFrame {
 	private JLabel lblMax;
 	private JLabel lblRadius;
 	private JLabel lblScale;
+	// End of variables declaration 
 }
 
