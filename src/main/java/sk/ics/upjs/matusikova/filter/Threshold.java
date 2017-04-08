@@ -1,8 +1,6 @@
 package sk.ics.upjs.matusikova.filter;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
-
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.gui.binary.VisualizeBinaryData;
 import boofcv.io.image.ConvertBufferedImage;

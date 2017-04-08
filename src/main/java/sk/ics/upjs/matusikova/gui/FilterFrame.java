@@ -21,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -98,12 +97,15 @@ public class FilterFrame {
 		menuBar.add(fileMenu);
 		
 		openMenuItem = new JMenuItem("Open");
+		openMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/dir.png")));
 		fileMenu.add(openMenuItem);
 		
 		saveMenuItem = new JMenuItem("Save");
+		saveMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/save3.png")));
 		fileMenu.add(saveMenuItem);
 		
 		saveAsMenuItem = new JMenuItem("Save as...");
+		saveAsMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/save3.png")));
 		fileMenu.add(saveAsMenuItem);
 		
 		exitMenuItem = new JMenuItem("Exit");
@@ -113,9 +115,11 @@ public class FilterFrame {
 		menuBar.add(filterMenu);
 		
 		grayscaleMenuItem = new JMenuItem("Grayscale");
+		grayscaleMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageG.png")));
 		filterMenu.add(grayscaleMenuItem);
 		
 		thresholdMenuItem = new JMenuItem("Threshold");
+		thresholdMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageT.png")));
 		filterMenu.add(thresholdMenuItem);
 		
 		edgeDetectionMenuItem = new JMenuItem("Edge detection");
@@ -125,6 +129,7 @@ public class FilterFrame {
 		menuBar.add(helpMenu);
 		
 		helpMenuItem = new JMenuItem("Help");
+		helpMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/help.png")));
 		helpMenu.add(helpMenuItem);
 		
 		aboutMenuItem = new JMenuItem("About");
@@ -196,13 +201,13 @@ public class FilterFrame {
 		
 		grayscaleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//urobit
+				GrayScaleFrame gray = new GrayScaleFrame(index, bufferedImageList, name);
+				gray.frame.setVisible(true);
 			}
 		});
 		
 		thresholdMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(bufferedImageList.size());
 				ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
 				threshold.frame.setVisible(true);
 			}
