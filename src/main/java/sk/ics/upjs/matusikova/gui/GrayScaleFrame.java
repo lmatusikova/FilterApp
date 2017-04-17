@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 
-import sk.ics.upjs.matusikova.other.Filter;
+import sk.ics.upjs.matusikova.filter.Filter;
 import sk.ics.upjs.matusikova.other.Save;
 import javax.swing.JLabel;
 import java.awt.Color;
@@ -29,10 +29,11 @@ public class GrayScaleFrame {
 	private JFileChooser fileChooser;
 	private File chooserDirectory;
 	private String pathToPhotos;
+	private Filter filter;
 	
 	//inputs
-	private static List<BufferedImage> bufferedImageList;
-	private static List<String> name;
+	private static List<BufferedImage> grayBufferedImageList;
+	private static List<String> grayNameList;
 	private static int index;
 		
 	//outputs
@@ -46,7 +47,7 @@ public class GrayScaleFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GrayScaleFrame window = new GrayScaleFrame(index, bufferedImageList, name);
+					GrayScaleFrame window = new GrayScaleFrame();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,19 +59,23 @@ public class GrayScaleFrame {
 	/**
 	 * Create the application.
 	 */
-	public GrayScaleFrame(int index, List<BufferedImage> bufferedImageList, List<String> name) {
-		GrayScaleFrame.bufferedImageList = bufferedImageList;
-		GrayScaleFrame.name = name;
-		GrayScaleFrame.index = index;
+	public GrayScaleFrame() {
+		initialize();
 		
+	}
+	
+	public void init(int index, List<BufferedImage> bufferedImageList, List<String> name) {
+		GrayScaleFrame.grayBufferedImageList = bufferedImageList;
+		GrayScaleFrame.grayNameList = name;
+		GrayScaleFrame.index = index;
 		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
 		initialize();
-		
 		if(index != -1) {
-			displayPhoto(GrayScaleFrame.bufferedImageList.get(index));
+			displayPhoto(bufferedImageList.get(index));
 		}
 	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
@@ -134,11 +139,9 @@ public class GrayScaleFrame {
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (applyRadioButton.isSelected()) {
-					//	returnImage();
 						frame.dispose();
 				    }
 					else if (applyAllRadioButton.isSelected()) {
-				    //	returnAllImages();
 				    	frame.dispose();
 				    }
 			}
@@ -153,12 +156,13 @@ public class GrayScaleFrame {
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (applyRadioButton.isSelected()) {
-					filteredPhoto = new Filter(index, bufferedImageList).grayscaleFilterImage();
+					filter = new Filter(index, grayBufferedImageList);
+					filteredPhoto = filter.grayscaleFilterImage();
 					System.out.println(filteredPhoto.toString());
 					displayPhoto(filteredPhoto);
 		        } 
 				else if (applyAllRadioButton.isSelected()) {
-					filteredImageList = new Filter(index, bufferedImageList).grayscaleFilterImages();
+					filteredImageList = new Filter(index, grayBufferedImageList).grayscaleFilterImages();
 		        }
 			}
 		});
@@ -170,13 +174,12 @@ public class GrayScaleFrame {
 				chooserDirectory = fileChooser.getSelectedFile();
 				pathToPhotos = chooserDirectory.getPath();
 
-				Save save = new Save(index, filteredPhoto, filteredImageList, name, pathToPhotos);
+				Save save = new Save(index, filteredPhoto, filteredImageList, grayNameList, pathToPhotos);
 				
 				if(chooserDirectory != null) {
 					if(applyAllRadioButton.isSelected()) {
 						save.saveImages();
 					} else {
-						//tu to nejde
 						save.saveImage();
 					}
 				}

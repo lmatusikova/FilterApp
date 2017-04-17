@@ -25,6 +25,7 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JSeparator;
 
 public class FilterFrame {
 
@@ -35,8 +36,8 @@ public class FilterFrame {
 	private BufferedImage bufferedImage;
 	private String photoPath;
 	private String photoDirPath;
-	private List<BufferedImage> bufferedImageList;
-	private List<String> name;
+	public List<BufferedImage> bufferedImageList;
+	public List<String> name;
 	private BufferedImage labelImage;
 	private int index = -1;
     
@@ -84,8 +85,9 @@ public class FilterFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(219, 229, 245));
 		frame.setTitle("Filter");
-		frame.setBounds(100, 100, 725, 498);
+		frame.setBounds(100, 100, 725, 429);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -137,7 +139,7 @@ public class FilterFrame {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
-		scrollPane.setBounds(10, 51, 182, 359);
+		scrollPane.setBounds(10, 51, 182, 299);
 		frame.getContentPane().add(scrollPane);
 		
 		photoList = new JList<String>();
@@ -148,8 +150,16 @@ public class FilterFrame {
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setOpaque(true);
 		imageLabel.setBorder(null);
-		imageLabel.setBounds(218, 51, 481, 359);
+		imageLabel.setBounds(202, 51, 500, 299);
 		frame.getContentPane().add(imageLabel);
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(0, 372, 709, 2);
+		frame.getContentPane().add(separator);
+		
+		JLabel lblPhotos = new JLabel("Photos");
+		lblPhotos.setBounds(10, 32, 46, 14);
+		frame.getContentPane().add(lblPhotos);
 		
 		/**
 		 * Application actions.
@@ -201,21 +211,29 @@ public class FilterFrame {
 		
 		grayscaleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GrayScaleFrame gray = new GrayScaleFrame(index, bufferedImageList, name);
+			
+				GrayScaleFrame gray = new GrayScaleFrame();
+				gray.init(index, bufferedImageList, name);
+				System.out.println("Vytvoril sa novy gray frame" + index + bufferedImageList + name + gray.toString());
 				gray.frame.setVisible(true);
 			}
 		});
 		
 		thresholdMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			
 				ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
+				System.out.println("Vytvoril sa novy thre frame" + index + bufferedImageList + name + threshold.toString());
 				threshold.frame.setVisible(true);
 			}
 		});
 		
 		edgeDetectionMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//urobit
+	
+				EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
+				System.out.println("Vytvoril sa novy edge frame" + index + bufferedImageList + name + edge.toString());
+				edge.frame.setVisible(true);
 			}
 		});
 		
@@ -297,6 +315,5 @@ public class FilterFrame {
 	private JScrollPane scrollPane;
 	private JList<String> photoList;
 	private JLabel imageLabel;
-	// End of variables declaration    
 }
 

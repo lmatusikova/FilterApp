@@ -11,7 +11,8 @@ import javax.swing.JSeparator;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import sk.ics.upjs.matusikova.other.Filter;
+
+import sk.ics.upjs.matusikova.filter.Filter;
 import sk.ics.upjs.matusikova.other.Save;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -69,11 +70,9 @@ public class ThresholdFrame {
 		ThresholdFrame.bufferedImageList = bufferedImageList;
 		ThresholdFrame.name = name;
 		ThresholdFrame.index = index;
-		
 		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
 		initialize();
-		
 		if(index != -1) {
 			displayPhoto(ThresholdFrame.bufferedImageList.get(index));
 		}	
@@ -85,7 +84,7 @@ public class ThresholdFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(219, 229, 245));
-		frame.setBounds(100, 100, 436, 490);
+		frame.setBounds(100, 100, 435, 474);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -101,15 +100,6 @@ public class ThresholdFrame {
 		imageLabel.setBounds(10, 50, 400, 249);
 		frame.getContentPane().add(imageLabel);
 		
-		minSpinner = new JSpinner();
-		minSpinner.setModel(new SpinnerNumberModel(new Integer(0), null, null, new Integer(1)));
-		minSpinner.setBounds(73, 335, 40, 18);
-		frame.getContentPane().add(minSpinner);
-		
-		maxSpinner = new JSpinner();
-		maxSpinner.setBounds(73, 363, 40, 18);
-		frame.getContentPane().add(maxSpinner);
-		
 		algorithmLabel = new JLabel("Algorithm:");
 		algorithmLabel.setBounds(10, 310, 53, 14);
 		frame.getContentPane().add(algorithmLabel);
@@ -119,47 +109,39 @@ public class ThresholdFrame {
 		algorithmComboBox.setBounds(73, 307, 115, 18);
 		frame.getContentPane().add(algorithmComboBox);
 		
-		applyRadioButton = new JRadioButton("Apply on current photo");
+		applyRadioButton = new JRadioButton("Apply on current image");
 		applyRadioButton.setOpaque(false);
-		applyRadioButton.setBounds(10, 388, 157, 23);
+		applyRadioButton.setBounds(6, 336, 157, 23);
 		frame.getContentPane().add(applyRadioButton);
 		buttonGroup.add(applyRadioButton);
 		applyRadioButton.setSelected(true);
 		
-		applyAllRadioButton = new JRadioButton("Apply on all photos");
+		applyAllRadioButton = new JRadioButton("Apply on all images");
 		applyAllRadioButton.setOpaque(false);
-		applyAllRadioButton.setBounds(195, 388, 141, 23);
+		applyAllRadioButton.setBounds(6, 362, 157, 23);
 		frame.getContentPane().add(applyAllRadioButton);
 		buttonGroup.add(applyAllRadioButton);
 		
 		saveAsButton = new JButton("Save as...");
-		saveAsButton.setBounds(10, 417, 89, 23);
+		saveAsButton.setBounds(10, 400, 89, 23);
 		frame.getContentPane().add(saveAsButton);
 		
 		applyButton = new JButton("Apply");
-		applyButton.setBounds(113, 417, 89, 23);
+		applyButton.setBounds(113, 400, 89, 23);
 		frame.getContentPane().add(applyButton);
 		
 		cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(219, 417, 89, 23);
+		cancelButton.setBounds(219, 400, 89, 23);
 		frame.getContentPane().add(cancelButton);
 		
 		okButton = new JButton("Ok");
-		okButton.setBounds(321, 417, 89, 23);
+		okButton.setBounds(321, 400, 89, 23);
 		frame.getContentPane().add(okButton);
 		
 		lblThresholding = new JLabel("Thresholding");
 		lblThresholding.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblThresholding.setBounds(10, 11, 103, 20);
 		frame.getContentPane().add(lblThresholding);
-		
-		lblMin = new JLabel("Min:");
-		lblMin.setBounds(10, 338, 46, 14);
-		frame.getContentPane().add(lblMin);
-		
-		lblMax = new JLabel("Max:");
-		lblMax.setBounds(10, 366, 46, 14);
-		frame.getContentPane().add(lblMax);
 		
 		lblRadius = new JLabel("Radius:");
 		lblRadius.setBounds(195, 338, 46, 14);
@@ -191,9 +173,6 @@ public class ThresholdFrame {
 		scaleSpinner.setBounds(368, 363, 40, 18);
 		frame.getContentPane().add(scaleSpinner);
 		
-		/**
-		 * Component actions.
-		 */
 		scaleSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				scaleSpinner.setValue(scaleSlider.getValue());
@@ -209,11 +188,9 @@ public class ThresholdFrame {
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (applyRadioButton.isSelected()) {
-				//	returnImage();
 					frame.dispose();
 			    }
 				else if (applyAllRadioButton.isSelected()) {
-			    //	returnAllImages();
 			    	frame.dispose();
 			    }
 			}
@@ -227,7 +204,7 @@ public class ThresholdFrame {
 		
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				filter = new Filter(index, bufferedImageList, algorithmComboBox.getSelectedItem().toString(), getMinSpinner(), getMaxSpinner(), getRadiusSpinner(), getScaleSpinner());
+				filter = new Filter(index, bufferedImageList, algorithmComboBox.getSelectedItem().toString(), getRadiusSpinner(), getScaleSpinner());
 				if (applyRadioButton.isSelected()) {
 					filteredPhoto = filter.thresholdFilterImage();
 					displayPhoto(filteredPhoto);
@@ -250,7 +227,6 @@ public class ThresholdFrame {
 					if(applyAllRadioButton.isSelected()) {
 						save.saveImages();
 					} else {
-						//tu to nejde
 						save.saveImage();
 					}
 				}		
@@ -261,18 +237,6 @@ public class ThresholdFrame {
 	/**
 	 * Other methods.
 	 */
-	public int getMaxSpinner() {
-        return (Integer) maxSpinner.getValue();
-    }
-
-    public void setMaxSpinner(JSpinner maxSpinner) {
-       maxSpinner.setModel(new SpinnerNumberModel(255, 0, 255, 1));
-    }
-    
-    public int getMinSpinner() {
-        return (Integer) minSpinner.getValue();
-    }
-    
     public int getRadiusSpinner() {
 		return (Integer) radiusSpinner.getValue();
 	}
@@ -288,10 +252,6 @@ public class ThresholdFrame {
 	public void setScaleSpinner(JSpinner scaleSpinner) {
 		this.scaleSpinner = scaleSpinner;
 	}
-
-	public void setMinSpinner(JSpinner minSpinner) {
-        minSpinner.setModel(new SpinnerNumberModel(0, -255, 0, 1));
-    }
 	
     private void displayPhoto(BufferedImage filteredPhoto) {
     	ImageIcon image = new ImageIcon(filteredPhoto);
@@ -299,21 +259,11 @@ public class ThresholdFrame {
 				Image.SCALE_SMOOTH);
 		imageLabel.setIcon(new ImageIcon(img));
     }
-    
-   /* private BufferedImage returnImage() {
-        return filteredPhoto;
-    }
-    
-    private List<BufferedImage> returnAllImages() {
-        return filteredImageList;
-    }*/
-    
+   
     // Variables declaration - do not modify 
     private ButtonGroup buttonGroup;
 	private JSeparator separator;
 	private JLabel imageLabel;
-	private JSpinner minSpinner;
-	private JSpinner maxSpinner;
 	private JLabel algorithmLabel;
 	private JComboBox algorithmComboBox;
 	private JRadioButton applyRadioButton;
@@ -323,8 +273,6 @@ public class ThresholdFrame {
 	private JButton cancelButton;
 	private JButton okButton;
 	private JLabel lblThresholding;
-	private JLabel lblMin;
-	private JLabel lblMax;
 	private JLabel lblRadius;
 	private JLabel lblScale;
 	private JSlider radiusSlider;
