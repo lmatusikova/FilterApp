@@ -1,4 +1,4 @@
-package sk.ics.upjs.matusikova.filter;
+package filter.filter;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -17,20 +17,20 @@ public class Filter {
 	private int index;
 	private List<BufferedImage> imageList;
 	private String algorithm;
-	private int radius;
-	private int scale;
 	EdgeFilter edge;
 	GrayscaleFilter gray;
-	private BufferedImage newImage = null;
+	private BufferedImage newImage;
+	private BufferedImage filteredImage;
 	private List<BufferedImage> newImages = new ArrayList<BufferedImage>();
 	
 	//constructor for threshold filter
-	public Filter(int index, List<BufferedImage> imageList, String algorithm, int radius, int scale) {
+	public Filter(int index, List<BufferedImage> imageList, String algorithm, int filter) {
 		this.index = index;
 		this.imageList = imageList;
 		this.algorithm = algorithm;
-		this.radius = radius;
-		this.scale = scale;
+		if(filter == 1) {
+			edge = new EdgeFilter();
+		} 
 	}
 	
 	//constructor for grayscale filter
@@ -39,15 +39,6 @@ public class Filter {
 		this.imageList = imageList;
 		gray = new GrayscaleFilter();
 	}
-	
-	//constructor for edge detection filter
-	public Filter(int index, List<BufferedImage> imageList, String operator) {
-		this.index = index;
-		this.imageList = imageList;
-		this.algorithm = operator;
-		edge = new EdgeFilter();
-	}
-	
 	
 	public BufferedImage grayscaleFilterImage() {
 		newImage = grayScale(imageList.get(index));
@@ -75,11 +66,11 @@ public class Filter {
         }
         
         else if("Local Gaussian".equals(algorithm)) {
-        	newImage = localGaussian(imageList.get(index), radius, scale);
+        	newImage = localGaussian(imageList.get(index));
         }
         
         else if("Local Sauvola".equals(algorithm)) {
-        	newImage = localSauvola(imageList.get(index), radius, scale);
+        	newImage = localSauvola(imageList.get(index));
         }
 		
 		return newImage;
@@ -104,14 +95,14 @@ public class Filter {
          
          else if("Local Gaussian".equals(algorithm)) {
             for (BufferedImage image : imageList) {
-            	 newImage = localGaussian(image, radius, scale);
+            	 newImage = localGaussian(image);
             	 newImages.add(newImage);
             }
          }
          
          else if("Local Sauvola".equals(algorithm)) {
             for (BufferedImage image : imageList) {
-            	 newImage = localSauvola(image, radius, scale);
+            	 newImage = localSauvola(image);
             	 newImages.add(newImage);
             }
         }
@@ -193,20 +184,18 @@ public class Filter {
         return bufferedImage; 
 	}
 	
-	public BufferedImage localGaussian(BufferedImage image, int radius, int scale) {
+	public BufferedImage localGaussian(BufferedImage image) {
 		GrayF32 in = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
         GrayU8 bin = new GrayU8(in.width, in.height);
-       // GThresholdImageOps.localGaussian(in, bin, radius, scale, true, null, null);
         GThresholdImageOps.localGaussian(in, bin, 42, 1.0, true, null, null);
         BufferedImage bufferedImage = VisualizeBinaryData.renderBinary(bin, false, null);
         
         return bufferedImage; 
 	}
 	
-	public BufferedImage localSauvola(BufferedImage image, int radius, int scale) {
+	public BufferedImage localSauvola(BufferedImage image) {
 		GrayF32 in = ConvertBufferedImage.convertFromSingle(image, null, GrayF32.class);
         GrayU8 bin = new GrayU8(in.width, in.height);
-        // GThresholdImageOps.localSauvola(in, bin, radius, scale, true);
         GThresholdImageOps.localSauvola(in, bin, 5, 0.30f, true);
         BufferedImage bufferedImage = VisualizeBinaryData.renderBinary(bin, false, null);
         
@@ -216,32 +205,32 @@ public class Filter {
 	public BufferedImage sobelFilter(BufferedImage image) {
 		edge.setVEdgeMatrix(EdgeFilter.SOBEL_V);
 		edge.setHEdgeMatrix(EdgeFilter.SOBEL_H);
-		newImage = edge.filter(image, newImage);
+		newImage = edge.filter(image, filteredImage);
 		return newImage;
 	}
 	
 	public BufferedImage prewittFilter(BufferedImage image) {
 		edge.setVEdgeMatrix(EdgeFilter.PREWITT_V);
 		edge.setHEdgeMatrix(EdgeFilter.ROBERTS_H);
-		newImage = edge.filter(image, newImage);
+		newImage = edge.filter(image, filteredImage);
 		return newImage;
 	}
 
 	public BufferedImage robertsFilter(BufferedImage image) {
 		edge.setVEdgeMatrix(EdgeFilter.ROBERTS_V);
 		edge.setHEdgeMatrix(EdgeFilter.ROBERTS_H);
-		newImage = edge.filter(image, newImage);
+		newImage = edge.filter(image, filteredImage);
 		return newImage;
 	}
 	
 	public BufferedImage laplaceFilter(BufferedImage image) {
 		LaplaceFilter laplace = new LaplaceFilter();
-		newImage = laplace.filter(image, newImage);
+		newImage = laplace.filter(image, filteredImage);
 		return newImage;
 	}
 	
 	public BufferedImage grayScale(BufferedImage image) {
-		newImage = gray.filter(image, newImage);
+		newImage = gray.filter(image, filteredImage);
 		return newImage;
 	}
 	

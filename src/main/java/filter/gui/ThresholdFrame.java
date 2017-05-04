@@ -1,4 +1,4 @@
-package sk.ics.upjs.matusikova.gui;
+package filter.gui;
 
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
-import sk.ics.upjs.matusikova.filter.Filter;
-import sk.ics.upjs.matusikova.other.Save;
+import filter.filter.Filter;
+import filter.other.Save;
+
+import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
@@ -25,10 +24,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JSlider;
 import java.awt.Font;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import java.awt.Toolkit;
 
 public class ThresholdFrame {
 
@@ -38,12 +35,10 @@ public class ThresholdFrame {
 	private String pathToPhotos;
 	private Filter filter;
 	
-	//inputs
 	private static List<BufferedImage> bufferedImageList;
 	private static List<String> name;
 	private static int index;
 	
-	//outputs
 	private BufferedImage filteredPhoto;
     private List<BufferedImage> filteredImageList;
 	
@@ -83,9 +78,11 @@ public class ThresholdFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(ThresholdFrame.class.getResource("/icons/imageT.png")));
 		frame.getContentPane().setBackground(new Color(219, 229, 245));
-		frame.setBounds(100, 100, 435, 474);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setBounds(100, 100, 424, 474);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		separator = new JSeparator();
@@ -105,7 +102,8 @@ public class ThresholdFrame {
 		frame.getContentPane().add(algorithmLabel);
 		
 		algorithmComboBox = new JComboBox<String>();
-		algorithmComboBox.setModel(new DefaultComboBoxModel(new String[] {"Compute otsu", "Compute entropy", "Local Gaussian", "Local Sauvola"}));
+		algorithmComboBox.setToolTipText("Choose algorithm");
+		algorithmComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Compute otsu", "Compute entropy", "Local Gaussian", "Local Sauvola"}));
 		algorithmComboBox.setBounds(73, 307, 115, 18);
 		frame.getContentPane().add(algorithmComboBox);
 		
@@ -143,48 +141,6 @@ public class ThresholdFrame {
 		lblThresholding.setBounds(10, 11, 103, 20);
 		frame.getContentPane().add(lblThresholding);
 		
-		lblRadius = new JLabel("Radius:");
-		lblRadius.setBounds(195, 338, 46, 14);
-		frame.getContentPane().add(lblRadius);
-		
-		lblScale = new JLabel("Scale:");
-		lblScale.setBounds(195, 366, 46, 14);
-		frame.getContentPane().add(lblScale);
-		
-		radiusSlider = new JSlider();
-		radiusSlider.setValue(0);
-		radiusSlider.setOpaque(false);
-		radiusSlider.setBounds(258, 335, 100, 18);
-		frame.getContentPane().add(radiusSlider);
-		
-		scaleSlider = new JSlider();
-		scaleSlider.setValue(0);
-		scaleSlider.setOpaque(false);
-		scaleSlider.setBounds(258, 363, 100, 18);
-		frame.getContentPane().add(scaleSlider);
-		
-		radiusSpinner = new JSpinner();
-		radiusSpinner.setModel(new SpinnerNumberModel(new Integer(0), null, null, new Integer(1)));
-		radiusSpinner.setBounds(368, 335, 40, 18);
-		frame.getContentPane().add(radiusSpinner);
-		
-		scaleSpinner = new JSpinner();
-		scaleSpinner.setModel(new SpinnerNumberModel(new Integer(0), null, null, new Integer(1)));
-		scaleSpinner.setBounds(368, 363, 40, 18);
-		frame.getContentPane().add(scaleSpinner);
-		
-		scaleSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				scaleSpinner.setValue(scaleSlider.getValue());
-			}
-		});
-		
-		radiusSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				radiusSpinner.setValue(radiusSlider.getValue());
-			}
-		});
-		
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (applyRadioButton.isSelected()) {
@@ -204,7 +160,7 @@ public class ThresholdFrame {
 		
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				filter = new Filter(index, bufferedImageList, algorithmComboBox.getSelectedItem().toString(), getRadiusSpinner(), getScaleSpinner());
+				filter = new Filter(index, bufferedImageList, algorithmComboBox.getSelectedItem().toString(), 0);
 				if (applyRadioButton.isSelected()) {
 					filteredPhoto = filter.thresholdFilterImage();
 					displayPhoto(filteredPhoto);
@@ -237,22 +193,6 @@ public class ThresholdFrame {
 	/**
 	 * Other methods.
 	 */
-    public int getRadiusSpinner() {
-		return (Integer) radiusSpinner.getValue();
-	}
-
-	public void setRadiusSpinner(JSpinner radiusSpinner) {
-		this.radiusSpinner = radiusSpinner;
-	}
-
-	public int getScaleSpinner() {
-		return (Integer) scaleSpinner.getValue();
-	}
-
-	public void setScaleSpinner(JSpinner scaleSpinner) {
-		this.scaleSpinner = scaleSpinner;
-	}
-	
     private void displayPhoto(BufferedImage filteredPhoto) {
     	ImageIcon image = new ImageIcon(filteredPhoto);
 		Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
@@ -265,7 +205,7 @@ public class ThresholdFrame {
 	private JSeparator separator;
 	private JLabel imageLabel;
 	private JLabel algorithmLabel;
-	private JComboBox algorithmComboBox;
+	private JComboBox<String> algorithmComboBox;
 	private JRadioButton applyRadioButton;
 	private JRadioButton applyAllRadioButton;
 	private JButton saveAsButton;
@@ -273,12 +213,6 @@ public class ThresholdFrame {
 	private JButton cancelButton;
 	private JButton okButton;
 	private JLabel lblThresholding;
-	private JLabel lblRadius;
-	private JLabel lblScale;
-	private JSlider radiusSlider;
-	private JSlider scaleSlider;
-	private JSpinner radiusSpinner;
-	private JSpinner scaleSpinner;
 	// End of variables declaration 
 }
 

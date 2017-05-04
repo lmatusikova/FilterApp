@@ -1,12 +1,12 @@
-package sk.ics.upjs.matusikova.gui;
+package filter.gui;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 
-import sk.ics.upjs.matusikova.filter.Filter;
-import sk.ics.upjs.matusikova.other.Save;
+import filter.filter.Filter;
+import filter.other.Save;
 
 import javax.swing.JLabel;
 import java.awt.Color;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class EdgeFrame {
 
@@ -38,12 +39,10 @@ public class EdgeFrame {
 	private String pathToPhotos;
 	private Filter filter;
 	
-	//inputs
 	private static List<BufferedImage> edgeBufferedImageList;
 	private static List<String> edgeNameList;
 	private static int edgeIndex;
 		
-	//outputs
 	private BufferedImage filteredPhoto;
 	private List<BufferedImage> filteredImageList;
 	
@@ -84,9 +83,11 @@ public class EdgeFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(EdgeFrame.class.getResource("/icons/edge.png")));
 		frame.getContentPane().setBackground(new Color(219, 229, 245));
-		frame.setBounds(100, 100, 435, 440);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setBounds(100, 100, 424, 440);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		separator = new JSeparator();
@@ -107,7 +108,7 @@ public class EdgeFrame {
 		frame.getContentPane().add(imageLabel);
 		
 		operatorComboBox = new JComboBox<String>();
-		operatorComboBox.setModel(new DefaultComboBoxModel(new String[] {"Prewitt operator", "Sobel operator", "Roberts operator", "Laplace operator"}));
+		operatorComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Prewitt operator", "Sobel operator", "Roberts operator", "Laplace operator"}));
 		operatorComboBox.setBounds(73, 307, 129, 18);
 		frame.getContentPane().add(operatorComboBox);
 		
@@ -160,7 +161,7 @@ public class EdgeFrame {
 		
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				filter = new Filter(edgeIndex, edgeBufferedImageList, operatorComboBox.getSelectedItem().toString());
+				filter = new Filter(edgeIndex, edgeBufferedImageList, operatorComboBox.getSelectedItem().toString(), 1);
 				if (applyRadioButton.isSelected()) {
 					filteredPhoto = filter.edgeFilterImage();
 					displayPhoto(filteredPhoto);
@@ -212,7 +213,7 @@ public class EdgeFrame {
 	private JSeparator separator;
 	private JLabel edgeDetectionLabel;
 	private JLabel imageLabel;
-	private JComboBox operatorComboBox;
+	private JComboBox<String> operatorComboBox;
 	private JLabel operatorLabel;
 	private JRadioButton applyRadioButton;
 	private JRadioButton applyAllRadioButton;

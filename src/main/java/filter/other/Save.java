@@ -1,4 +1,4 @@
-package sk.ics.upjs.matusikova.other;
+package filter.other;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

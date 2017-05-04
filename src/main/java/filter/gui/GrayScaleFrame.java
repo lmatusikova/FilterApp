@@ -1,11 +1,12 @@
-package sk.ics.upjs.matusikova.gui;
+package filter.gui;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JSeparator;
 
-import sk.ics.upjs.matusikova.filter.Filter;
-import sk.ics.upjs.matusikova.other.Save;
+import filter.filter.Filter;
+import filter.other.Save;
+
 import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class GrayScaleFrame {
 
@@ -82,9 +84,11 @@ public class GrayScaleFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(GrayScaleFrame.class.getResource("/icons/imageG.png")));
 		frame.getContentPane().setBackground(new Color(219, 229, 245));
-		frame.setBounds(100, 100, 436, 409);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setBounds(100, 100, 425, 409);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		buttonGroup = new ButtonGroup();

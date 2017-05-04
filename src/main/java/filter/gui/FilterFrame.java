@@ -1,4 +1,4 @@
-package sk.ics.upjs.matusikova.gui;
+package filter.gui;
 
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.JList;
@@ -26,10 +27,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JSeparator;
+import javax.swing.JToolBar;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.Font;
 
 public class FilterFrame {
 
-	private JFrame frame;
+	private JFrame frmFilterApplication;
 	private JFileChooser fileChooser;
     private File chooserFile;
 	private DefaultListModel<String> photoListModel;
@@ -49,7 +54,7 @@ public class FilterFrame {
 			public void run() {
 				try {
 					FilterFrame window = new FilterFrame();
-					window.frame.setVisible(true);
+					window.frmFilterApplication.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -84,16 +89,17 @@ public class FilterFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(219, 229, 245));
-		frame.setTitle("Filter");
-		frame.setBounds(100, 100, 725, 429);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmFilterApplication = new JFrame();
+		frmFilterApplication.setResizable(false);
+		frmFilterApplication.getContentPane().setBackground(new Color(219, 229, 245));
+		frmFilterApplication.setTitle("Filter tool");
+		frmFilterApplication.setBounds(100, 100, 686, 478);
+		frmFilterApplication.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmFilterApplication.getContentPane().setLayout(null);
 		
 		menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 709, 21);
-		frame.getContentPane().add(menuBar);
+		menuBar.setBounds(0, 0, 682, 21);
+		frmFilterApplication.getContentPane().add(menuBar);
 		
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
@@ -101,14 +107,6 @@ public class FilterFrame {
 		openMenuItem = new JMenuItem("Open");
 		openMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/dir.png")));
 		fileMenu.add(openMenuItem);
-		
-		saveMenuItem = new JMenuItem("Save");
-		saveMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/save3.png")));
-		fileMenu.add(saveMenuItem);
-		
-		saveAsMenuItem = new JMenuItem("Save as...");
-		saveAsMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/save3.png")));
-		fileMenu.add(saveAsMenuItem);
 		
 		exitMenuItem = new JMenuItem("Exit");
 		fileMenu.add(exitMenuItem);
@@ -125,6 +123,7 @@ public class FilterFrame {
 		filterMenu.add(thresholdMenuItem);
 		
 		edgeDetectionMenuItem = new JMenuItem("Edge detection");
+		edgeDetectionMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/edge.png")));
 		filterMenu.add(edgeDetectionMenuItem);
 		
 		helpMenu = new JMenu("Help");
@@ -139,8 +138,8 @@ public class FilterFrame {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
-		scrollPane.setBounds(10, 51, 182, 299);
-		frame.getContentPane().add(scrollPane);
+		scrollPane.setBounds(10, 74, 182, 318);
+		frmFilterApplication.getContentPane().add(scrollPane);
 		
 		photoList = new JList<String>();
 		photoList.setBorder(null);
@@ -150,20 +149,117 @@ public class FilterFrame {
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setOpaque(true);
 		imageLabel.setBorder(null);
-		imageLabel.setBounds(202, 51, 500, 299);
-		frame.getContentPane().add(imageLabel);
+		imageLabel.setBounds(202, 74, 470, 318);
+		frmFilterApplication.getContentPane().add(imageLabel);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 372, 709, 2);
-		frame.getContentPane().add(separator);
+		separator.setBounds(0, 413, 682, 2);
+		frmFilterApplication.getContentPane().add(separator);
 		
-		JLabel lblPhotos = new JLabel("Photos");
-		lblPhotos.setBounds(10, 32, 46, 14);
-		frame.getContentPane().add(lblPhotos);
+		JLabel lblPhotos = new JLabel("Images");
+		lblPhotos.setBounds(10, 55, 46, 14);
+		frmFilterApplication.getContentPane().add(lblPhotos);
+		
+		JToolBar toolBar = new JToolBar();
+		toolBar.setBackground(new Color(231,234,245));
+		toolBar.setFloatable(false);
+		toolBar.setBounds(0, 22, 682, 30);
+		frmFilterApplication.getContentPane().add(toolBar);
+		
+		JPanel panel = new JPanel();
+		panel.setOpaque(false);
+		toolBar.add(panel);
+		
+		openButton = new JButton("");
+		openButton.setBounds(3, 4, 22, 22);
+		openButton.setToolTipText("Load images from the directory");
+		openButton.setContentAreaFilled(false);
+		openButton.setBorderPainted(false);
+		openButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/dir.png")));
+		
+		panel.setLayout(null);
+		panel.add(openButton);
+		
+		grayButton = new JButton("");
+		grayButton.setBounds(29, 4, 22, 22);
+		grayButton.setToolTipText("Grayscale filter");
+		grayButton.setContentAreaFilled(false);
+		grayButton.setBorderPainted(false);
+		grayButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageG.png")));
+		panel.add(grayButton);
+		
+		thresholdButton = new JButton("");
+		thresholdButton.setBounds(55, 4, 22, 22);
+		thresholdButton.setToolTipText("Threshold filter");
+		thresholdButton.setContentAreaFilled(false);
+		thresholdButton.setBorderPainted(false);
+		thresholdButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageT.png")));
+		panel.add(thresholdButton);
+		
+		edgeButton = new JButton("");
+		edgeButton.setBounds(81, 4, 22, 22);
+		edgeButton.setToolTipText("Edge detection filter");
+		edgeButton.setContentAreaFilled(false);
+		edgeButton.setBorderPainted(false);
+		edgeButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/edge.png")));
+		panel.add(edgeButton);
+		
+		JLabel lblCopyrightcLucia = new JLabel("Copyright (c) Lucia Matusikova 2017");
+		lblCopyrightcLucia.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+		lblCopyrightcLucia.setBounds(477, 418, 195, 14);
+		frmFilterApplication.getContentPane().add(lblCopyrightcLucia);
 		
 		/**
 		 * Application actions.
 		 */
+		grayButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(photoListModel.size() != 0) {
+					GrayScaleFrame gray = new GrayScaleFrame();
+					gray.init(index, bufferedImageList, name);
+					gray.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		thresholdButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(photoListModel.size() != 0) {
+					ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
+					threshold.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		edgeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(photoListModel.size() != 0) {
+					EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
+					edge.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!photoListModel.isEmpty()) {
+					photoListModel.clear();
+					bufferedImageList.clear();
+					name.clear();
+					imageLabel.setIcon(new ImageIcon());
+				}
+				
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.showOpenDialog((Component)arg0.getSource());		
+				loadPhotos();
+			}
+		});
 		
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -189,20 +285,6 @@ public class FilterFrame {
 			}
 		});
 		
-		saveMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//urobit
-			}
-		});
-		
-		saveAsMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fileChooser.showOpenDialog((Component)e.getSource());
-			    //dokoncit  
-			}
-		});
-		
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -211,29 +293,35 @@ public class FilterFrame {
 		
 		grayscaleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-			
-				GrayScaleFrame gray = new GrayScaleFrame();
-				gray.init(index, bufferedImageList, name);
-				System.out.println("Vytvoril sa novy gray frame" + index + bufferedImageList + name + gray.toString());
-				gray.frame.setVisible(true);
+				if(photoListModel.size() != 0) {
+					GrayScaleFrame gray = new GrayScaleFrame();
+					gray.init(index, bufferedImageList, name);
+					gray.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
 		thresholdMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
-				ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
-				System.out.println("Vytvoril sa novy thre frame" + index + bufferedImageList + name + threshold.toString());
-				threshold.frame.setVisible(true);
-			}
+				if(photoListModel.size() != 0) {
+					ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
+					threshold.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}	
 		});
 		
 		edgeDetectionMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-	
-				EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
-				System.out.println("Vytvoril sa novy edge frame" + index + bufferedImageList + name + edge.toString());
-				edge.frame.setVisible(true);
+				if(photoListModel.size() != 0) {
+					EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
+					edge.frame.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
@@ -302,8 +390,6 @@ public class FilterFrame {
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
 	private JMenuItem openMenuItem;
-	private JMenuItem saveMenuItem;
-	private JMenuItem saveAsMenuItem;
 	private JMenuItem exitMenuItem;
 	private JMenu filterMenu;
 	private JMenuItem grayscaleMenuItem;
@@ -315,5 +401,9 @@ public class FilterFrame {
 	private JScrollPane scrollPane;
 	private JList<String> photoList;
 	private JLabel imageLabel;
+	private JButton openButton;
+	private JButton grayButton;
+	private JButton thresholdButton;
+	private JButton edgeButton;
 }
 
