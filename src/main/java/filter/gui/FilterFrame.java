@@ -93,7 +93,7 @@ public class FilterFrame {
 		frmFilterApplication.setResizable(false);
 		frmFilterApplication.getContentPane().setBackground(new Color(219, 229, 245));
 		frmFilterApplication.setTitle("Filter tool");
-		frmFilterApplication.setBounds(100, 100, 686, 478);
+		frmFilterApplication.setBounds(100, 100, 686, 465);
 		frmFilterApplication.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmFilterApplication.getContentPane().setLayout(null);
 		
