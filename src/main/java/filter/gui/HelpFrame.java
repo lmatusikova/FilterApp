@@ -12,9 +12,6 @@ import javax.swing.border.EmptyBorder;
 
 public class HelpFrame extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4102118683134344931L;
 	private JPanel contentPane;
 
@@ -47,25 +44,25 @@ public class HelpFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 494, 362);
 		contentPane.add(scrollPane);
 		JEditorPane editorPane = new JEditorPane();
-		
+
 		editorPane.setEditable(false);
 		URL helpURL = HelpFrame.class.getResource("/help.html");
-		
+
 		try {
 
-		    editorPane.setPage(helpURL);
-	
+			editorPane.setPage(helpURL);
+
 		} catch (IOException e) {
-		    System.err.println("Attempted to read a bad URL: " + helpURL);
+			System.err.println("Attempted to read a bad URL: " + helpURL);
 		}
-		
+
 		scrollPane.setViewportView(editorPane);
-		
+
 	}
 
 }

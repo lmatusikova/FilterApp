@@ -36,7 +36,8 @@ public class FilterFrame {
 
 	private JFrame frmFilterApplication;
 	private JFileChooser fileChooser;
-    private File chooserFile;
+	private HelpFrame help;
+	private File chooserFile;
 	private DefaultListModel<String> photoListModel;
 	private BufferedImage bufferedImage;
 	private String photoPath;
@@ -45,7 +46,7 @@ public class FilterFrame {
 	public List<String> name;
 	private BufferedImage labelImage;
 	private int index = -1;
-    
+
 	/**
 	 * Launch the application.
 	 */
@@ -69,18 +70,32 @@ public class FilterFrame {
 		initialize();
 		init();
 	}
-	
+
+	/**
+	 * Initialize some objects.
+	 */
 	public final void init() {
-        fileChooser = new JFileChooser();
-        photoListModel = new DefaultListModel<String>();
-        bufferedImageList = new ArrayList<BufferedImage>();
-        name = new ArrayList<String>();
-    }
-	
+		fileChooser = new JFileChooser();
+		photoListModel = new DefaultListModel<String>();
+		bufferedImageList = new ArrayList<BufferedImage>();
+		name = new ArrayList<String>();
+	}
+
+	/**
+	 * Getter
+	 * 
+	 * @return photo directory path
+	 */
 	public String getPhotoDirPath() {
 		return photoDirPath;
 	}
 
+	/**
+	 * Setter
+	 * 
+	 * @param photoDirPath
+	 *            set photo directory path
+	 */
 	public void setPhotoDirPath(String photoDirPath) {
 		this.photoDirPath = photoDirPath;
 	}
@@ -96,90 +111,90 @@ public class FilterFrame {
 		frmFilterApplication.setBounds(100, 100, 686, 465);
 		frmFilterApplication.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmFilterApplication.getContentPane().setLayout(null);
-		
+
 		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 682, 21);
 		frmFilterApplication.getContentPane().add(menuBar);
-		
+
 		fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
-		
+
 		openMenuItem = new JMenuItem("Open");
 		openMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/dir.png")));
 		fileMenu.add(openMenuItem);
-		
+
 		exitMenuItem = new JMenuItem("Exit");
 		fileMenu.add(exitMenuItem);
-		
+
 		filterMenu = new JMenu("Filter");
 		menuBar.add(filterMenu);
-		
+
 		grayscaleMenuItem = new JMenuItem("Grayscale");
 		grayscaleMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageG.png")));
 		filterMenu.add(grayscaleMenuItem);
-		
+
 		thresholdMenuItem = new JMenuItem("Threshold");
 		thresholdMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageT.png")));
 		filterMenu.add(thresholdMenuItem);
-		
+
 		edgeDetectionMenuItem = new JMenuItem("Edge detection");
 		edgeDetectionMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/edge.png")));
 		filterMenu.add(edgeDetectionMenuItem);
-		
+
 		helpMenu = new JMenu("Help");
 		menuBar.add(helpMenu);
-		
+
 		helpMenuItem = new JMenuItem("Help");
 		helpMenuItem.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/help.png")));
 		helpMenu.add(helpMenuItem);
-		
+
 		aboutMenuItem = new JMenuItem("About");
 		helpMenu.add(aboutMenuItem);
-		
+
 		scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
 		scrollPane.setBounds(10, 74, 182, 318);
 		frmFilterApplication.getContentPane().add(scrollPane);
-		
+
 		photoList = new JList<String>();
 		photoList.setBorder(null);
 		scrollPane.setViewportView(photoList);
-		
+
 		imageLabel = new JLabel("");
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setOpaque(true);
 		imageLabel.setBorder(null);
 		imageLabel.setBounds(202, 74, 470, 318);
 		frmFilterApplication.getContentPane().add(imageLabel);
-		
+
 		JSeparator separator = new JSeparator();
 		separator.setBounds(0, 413, 682, 2);
 		frmFilterApplication.getContentPane().add(separator);
-		
+
 		JLabel lblPhotos = new JLabel("Images");
 		lblPhotos.setBounds(10, 55, 46, 14);
 		frmFilterApplication.getContentPane().add(lblPhotos);
-		
+
 		JToolBar toolBar = new JToolBar();
-		toolBar.setBackground(new Color(231,234,245));
+		toolBar.setBackground(new Color(231, 234, 245));
 		toolBar.setFloatable(false);
 		toolBar.setBounds(0, 22, 682, 30);
 		frmFilterApplication.getContentPane().add(toolBar);
-		
+
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		toolBar.add(panel);
-		
+
 		openButton = new JButton("");
 		openButton.setBounds(3, 4, 22, 22);
 		openButton.setToolTipText("Load images from the directory");
 		openButton.setContentAreaFilled(false);
 		openButton.setBorderPainted(false);
 		openButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/dir.png")));
-		
+
 		panel.setLayout(null);
 		panel.add(openButton);
-		
+
 		grayButton = new JButton("");
 		grayButton.setBounds(29, 4, 22, 22);
 		grayButton.setToolTipText("Grayscale filter");
@@ -187,7 +202,7 @@ public class FilterFrame {
 		grayButton.setBorderPainted(false);
 		grayButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageG.png")));
 		panel.add(grayButton);
-		
+
 		thresholdButton = new JButton("");
 		thresholdButton.setBounds(55, 4, 22, 22);
 		thresholdButton.setToolTipText("Threshold filter");
@@ -195,7 +210,7 @@ public class FilterFrame {
 		thresholdButton.setBorderPainted(false);
 		thresholdButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/imageT.png")));
 		panel.add(thresholdButton);
-		
+
 		edgeButton = new JButton("");
 		edgeButton.setBounds(81, 4, 22, 22);
 		edgeButton.setToolTipText("Edge detection filter");
@@ -203,79 +218,79 @@ public class FilterFrame {
 		edgeButton.setBorderPainted(false);
 		edgeButton.setIcon(new ImageIcon(FilterFrame.class.getResource("/icons/edge.png")));
 		panel.add(edgeButton);
-		
+
 		JLabel lblCopyrightcLucia = new JLabel("Copyright (c) Lucia Matusikova 2017");
 		lblCopyrightcLucia.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 		lblCopyrightcLucia.setBounds(477, 418, 195, 14);
 		frmFilterApplication.getContentPane().add(lblCopyrightcLucia);
-		
-		/**
-		 * Application actions.
-		 */
+
 		grayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					GrayScaleFrame gray = new GrayScaleFrame();
 					gray.init(index, bufferedImageList, name);
 					gray.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		thresholdButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
 					threshold.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		edgeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
 					edge.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!photoListModel.isEmpty()) {
+				if (!photoListModel.isEmpty()) {
 					photoListModel.clear();
 					bufferedImageList.clear();
 					name.clear();
 					imageLabel.setIcon(new ImageIcon());
 				}
-				
+
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fileChooser.showOpenDialog((Component)arg0.getSource());		
+				fileChooser.showOpenDialog((Component) arg0.getSource());
 				loadPhotos();
 			}
 		});
-		
+
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!photoListModel.isEmpty()) {
+				if (!photoListModel.isEmpty()) {
 					photoListModel.clear();
 					bufferedImageList.clear();
 					name.clear();
 					imageLabel.setIcon(new ImageIcon());
 				}
-				
+
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fileChooser.showOpenDialog((Component)e.getSource());		
-				loadPhotos();		
+				fileChooser.showOpenDialog((Component) e.getSource());
+				loadPhotos();
 			}
 		});
-		
+
 		photoList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -284,87 +299,97 @@ public class FilterFrame {
 				}
 			}
 		});
-		
+
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
-		
+
 		grayscaleMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					GrayScaleFrame gray = new GrayScaleFrame();
 					gray.init(index, bufferedImageList, name);
 					gray.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		thresholdMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					ThresholdFrame threshold = new ThresholdFrame(index, bufferedImageList, name);
 					threshold.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
-			}	
+			}
 		});
-		
+
 		edgeDetectionMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(photoListModel.size() != 0) {
+				if (photoListModel.size() != 0) {
 					EdgeFrame edge = new EdgeFrame(index, bufferedImageList, name);
 					edge.frame.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You didn't choose any photo directory.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		helpMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//urobit
+				help = new HelpFrame();
+				help.setVisible(true);
 			}
 		});
-		
+
 		aboutMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//urobit
+
 			}
 		});
-		
-		}
-	
+
+	}
+
+	/**
+	 * Load photos from the given directory
+	 */
 	private void loadPhotos() {
 		int index = 0;
 		chooserFile = fileChooser.getSelectedFile();
-		
-		if(chooserFile != null) {
+
+		if (chooserFile != null) {
 			File directory = new File(chooserFile.getPath());
 			setPhotoDirPath(chooserFile.getPath());
-			
+
 			for (String file : directory.list()) {
 				if (file.contains(".jpg") || file.contains(".JPG") || file.contains(".PNG") || file.contains(".png")) {
 					photoListModel.add(index, file);
 					index++;
-					
+
 					try {
-						bufferedImage = ImageIO.read(new File(directory+File.separator+file));
+						bufferedImage = ImageIO.read(new File(directory + File.separator + file));
 						bufferedImageList.add(bufferedImage);
 						name.add(file);
 					} catch (IOException e) {
 						System.out.println("Image cannot be load.");
-					}	
+					}
 				}
 			}
 			photoList.setModel(photoListModel);
 		}
 	}
-	
+
+	/**
+	 * Method for displaying selected image.
+	 */
 	private void setPhotoInLabel() {
 		index = photoList.getSelectedIndex();
 
@@ -385,7 +410,7 @@ public class FilterFrame {
 				Image.SCALE_SMOOTH);
 		imageLabel.setIcon(new ImageIcon(img));
 	}
-	
+
 	// Variables declaration - do not modify
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -406,4 +431,3 @@ public class FilterFrame {
 	private JButton thresholdButton;
 	private JButton edgeButton;
 }
-

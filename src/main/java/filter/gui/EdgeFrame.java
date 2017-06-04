@@ -38,14 +38,14 @@ public class EdgeFrame {
 	private File chooserDirectory;
 	private String pathToPhotos;
 	private Filter filter;
-	
+
 	private static List<BufferedImage> edgeBufferedImageList;
 	private static List<String> edgeNameList;
 	private static int edgeIndex;
-		
+
 	private BufferedImage filteredPhoto;
 	private List<BufferedImage> filteredImageList;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -61,7 +61,7 @@ public class EdgeFrame {
 			}
 		});
 	}
-	
+
 	/**
 	 * Create the application.
 	 */
@@ -72,10 +72,10 @@ public class EdgeFrame {
 		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
 		initialize();
-	   	
-		if(index != -1) {
+
+		if (index != -1) {
 			displayPhoto(EdgeFrame.edgeBufferedImageList.get(index));
-		}	
+		}
 	}
 
 	/**
@@ -89,89 +89,85 @@ public class EdgeFrame {
 		frame.setBounds(100, 100, 424, 440);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		separator = new JSeparator();
 		separator.setBounds(0, 37, 419, 2);
 		frame.getContentPane().add(separator);
-		
+
 		buttonGroup = new ButtonGroup();
-		
+
 		edgeDetectionLabel = new JLabel("Edge detection");
 		edgeDetectionLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		edgeDetectionLabel.setBounds(10, 11, 119, 20);
 		frame.getContentPane().add(edgeDetectionLabel);
-		
+
 		imageLabel = new JLabel("");
 		imageLabel.setOpaque(true);
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setBounds(10, 50, 400, 249);
 		frame.getContentPane().add(imageLabel);
-		
+
 		operatorComboBox = new JComboBox<String>();
-		operatorComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Prewitt operator", "Sobel operator", "Roberts operator", "Laplace operator"}));
+		operatorComboBox.setModel(new DefaultComboBoxModel<String>(
+				new String[] { "Prewitt operator", "Sobel operator", "Roberts operator", "Laplace operator" }));
 		operatorComboBox.setBounds(73, 307, 129, 18);
 		frame.getContentPane().add(operatorComboBox);
-		
+
 		operatorLabel = new JLabel("Operator:");
 		operatorLabel.setBounds(10, 310, 53, 14);
 		frame.getContentPane().add(operatorLabel);
-		
+
 		applyRadioButton = new JRadioButton("Apply on current image");
 		applyRadioButton.setOpaque(false);
 		applyRadioButton.setBounds(10, 336, 157, 23);
 		frame.getContentPane().add(applyRadioButton);
 		buttonGroup.add(applyRadioButton);
 		applyRadioButton.setSelected(true);
-		
+
 		applyAllRadioButton = new JRadioButton("Apply on all images");
 		applyAllRadioButton.setOpaque(false);
 		applyAllRadioButton.setBounds(195, 336, 157, 23);
 		frame.getContentPane().add(applyAllRadioButton);
 		buttonGroup.add(applyAllRadioButton);
-		
+
 		okButton = new JButton("Ok");
 		okButton.setBounds(321, 371, 89, 23);
 		frame.getContentPane().add(okButton);
-		
+
 		cancelButton = new JButton("Cancel");
 		cancelButton.setBounds(219, 371, 89, 23);
 		frame.getContentPane().add(cancelButton);
-		
+
 		applyButton = new JButton("Apply");
 		applyButton.setBounds(113, 371, 89, 23);
 		frame.getContentPane().add(applyButton);
-		
+
 		saveAsButton = new JButton("Save as...");
 		saveAsButton.setBounds(10, 371, 89, 23);
 		frame.getContentPane().add(saveAsButton);
-		
-		/**
-		 * Component actions.
-		 */
+
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (applyRadioButton.isSelected()) {
 					frame.dispose();
-				}
-				else if (applyAllRadioButton.isSelected()) {
+				} else if (applyAllRadioButton.isSelected()) {
 					frame.dispose();
 				}
 			}
 		});
-		
+
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				filter = new Filter(edgeIndex, edgeBufferedImageList, operatorComboBox.getSelectedItem().toString(), 1);
 				if (applyRadioButton.isSelected()) {
 					filteredPhoto = filter.edgeFilterImage();
 					displayPhoto(filteredPhoto);
-		        } 
-				else if (applyAllRadioButton.isSelected()) {
-					 filteredImageList = filter.edgeFilterImages();
-		        }	
+				} else if (applyAllRadioButton.isSelected()) {
+					filteredImageList = filter.edgeFilterImages();
+				}
 			}
 		});
-		
+
 		saveAsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -180,8 +176,8 @@ public class EdgeFrame {
 				pathToPhotos = chooserDirectory.getPath();
 
 				Save save = new Save(edgeIndex, filteredPhoto, filteredImageList, edgeNameList, pathToPhotos);
-				if(chooserDirectory != null) {
-					if(applyAllRadioButton.isSelected()) {
+				if (chooserDirectory != null) {
+					if (applyAllRadioButton.isSelected()) {
 						save.saveImages();
 					} else {
 						save.saveImage();
@@ -189,26 +185,29 @@ public class EdgeFrame {
 				}
 			}
 		});
-		
+
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 			}
 		});
-		
+
 	}
-	
+
 	/**
-	 * Other methods.
+	 * Method for displaying selected image.
+	 * 
+	 * @param filteredPhoto
+	 *            selected image
 	 */
-	  private void displayPhoto(BufferedImage filteredPhoto) {
-	    	ImageIcon image = new ImageIcon(filteredPhoto);
-			Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
-					Image.SCALE_SMOOTH);
-			imageLabel.setIcon(new ImageIcon(img));
-	    }
-	
-	// Variables declaration - do not modify 
+	private void displayPhoto(BufferedImage filteredPhoto) {
+		ImageIcon image = new ImageIcon(filteredPhoto);
+		Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
+				Image.SCALE_SMOOTH);
+		imageLabel.setIcon(new ImageIcon(img));
+	}
+
+	// Variables declaration - do not modify
 	private ButtonGroup buttonGroup;
 	private JSeparator separator;
 	private JLabel edgeDetectionLabel;
@@ -221,5 +220,5 @@ public class EdgeFrame {
 	private JButton cancelButton;
 	private JButton applyButton;
 	private JButton saveAsButton;
-	// End of variables declaration 
+	// End of variables declaration
 }

@@ -32,13 +32,11 @@ public class GrayScaleFrame {
 	private File chooserDirectory;
 	private String pathToPhotos;
 	private Filter filter;
-	
-	//inputs
+
 	private static List<BufferedImage> grayBufferedImageList;
 	private static List<String> grayNameList;
 	private static int index;
-		
-	//outputs
+
 	private BufferedImage filteredPhoto;
 	private List<BufferedImage> filteredImageList;
 
@@ -63,9 +61,19 @@ public class GrayScaleFrame {
 	 */
 	public GrayScaleFrame() {
 		initialize();
-		
+
 	}
-	
+
+	/**
+	 * Initialize some objects.
+	 * 
+	 * @param index
+	 *            index of selected image
+	 * @param bufferedImageList
+	 *            list of images
+	 * @param name
+	 *            image names
+	 */
 	public void init(int index, List<BufferedImage> bufferedImageList, List<String> name) {
 		GrayScaleFrame.grayBufferedImageList = bufferedImageList;
 		GrayScaleFrame.grayNameList = name;
@@ -73,11 +81,10 @@ public class GrayScaleFrame {
 		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
 		initialize();
-		if(index != -1) {
+		if (index != -1) {
 			displayPhoto(bufferedImageList.get(index));
 		}
 	}
-	
 
 	/**
 	 * Initialize the contents of the frame.
@@ -90,73 +97,69 @@ public class GrayScaleFrame {
 		frame.setBounds(100, 100, 425, 409);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		buttonGroup = new ButtonGroup();
-		
+
 		separator = new JSeparator();
 		separator.setBounds(0, 37, 420, 2);
 		frame.getContentPane().add(separator);
-		
+
 		grayscaleLabel = new JLabel("Grayscale");
 		grayscaleLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		grayscaleLabel.setBounds(10, 11, 92, 20);
 		frame.getContentPane().add(grayscaleLabel);
-		
+
 		imageLabel = new JLabel("");
 		imageLabel.setOpaque(true);
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setBounds(10, 50, 400, 249);
 		frame.getContentPane().add(imageLabel);
-		
+
 		applyRadioButton = new JRadioButton("Apply on current image");
 		applyRadioButton.setOpaque(false);
 		applyRadioButton.setBounds(7, 306, 145, 23);
 		frame.getContentPane().add(applyRadioButton);
 		buttonGroup.add(applyRadioButton);
 		applyRadioButton.setSelected(true);
-		
+
 		applyAllRadioButton = new JRadioButton("Apply on all images");
 		applyAllRadioButton.setOpaque(false);
 		applyAllRadioButton.setBounds(173, 306, 145, 23);
 		frame.getContentPane().add(applyAllRadioButton);
 		buttonGroup.add(applyAllRadioButton);
-		
+
 		saveAsButton = new JButton("Save as...");
 		saveAsButton.setBounds(10, 336, 89, 23);
 		frame.getContentPane().add(saveAsButton);
-		
+
 		applyButton = new JButton("Apply");
 		applyButton.setBounds(113, 336, 89, 23);
 		frame.getContentPane().add(applyButton);
-		
+
 		cancelButton = new JButton("Cancel");
 		cancelButton.setBounds(219, 336, 89, 23);
 		frame.getContentPane().add(cancelButton);
-		
+
 		okButton = new JButton("Ok");
 		okButton.setBounds(321, 336, 89, 23);
 		frame.getContentPane().add(okButton);
-		
-		/**
-		 * Component actions.
-		 */
+
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (applyRadioButton.isSelected()) {
-						frame.dispose();
-				    }
-					else if (applyAllRadioButton.isSelected()) {
-				    	frame.dispose();
-				    }
+					frame.dispose();
+				} else if (applyAllRadioButton.isSelected()) {
+					frame.dispose();
+				}
 			}
 		});
-		
+
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-						frame.dispose();
+				frame.dispose();
 			}
 		});
-		
+
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (applyRadioButton.isSelected()) {
@@ -164,13 +167,12 @@ public class GrayScaleFrame {
 					filteredPhoto = filter.grayscaleFilterImage();
 					System.out.println(filteredPhoto.toString());
 					displayPhoto(filteredPhoto);
-		        } 
-				else if (applyAllRadioButton.isSelected()) {
+				} else if (applyAllRadioButton.isSelected()) {
 					filteredImageList = new Filter(index, grayBufferedImageList).grayscaleFilterImages();
-		        }
+				}
 			}
 		});
-		
+
 		saveAsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -179,9 +181,9 @@ public class GrayScaleFrame {
 				pathToPhotos = chooserDirectory.getPath();
 
 				Save save = new Save(index, filteredPhoto, filteredImageList, grayNameList, pathToPhotos);
-				
-				if(chooserDirectory != null) {
-					if(applyAllRadioButton.isSelected()) {
+
+				if (chooserDirectory != null) {
+					if (applyAllRadioButton.isSelected()) {
 						save.saveImages();
 					} else {
 						save.saveImage();
@@ -189,17 +191,23 @@ public class GrayScaleFrame {
 				}
 			}
 		});
-		
+
 	}
-	
+
+	/**
+	 * Method for displaying selected image.
+	 * 
+	 * @param filteredPhoto
+	 *            selected image
+	 */
 	private void displayPhoto(BufferedImage filteredPhoto) {
-    	ImageIcon image = new ImageIcon(filteredPhoto);
+		ImageIcon image = new ImageIcon(filteredPhoto);
 		Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
 				Image.SCALE_SMOOTH);
 		imageLabel.setIcon(new ImageIcon(img));
-    }
-	
-	// Variables declaration - do not modify 
+	}
+
+	// Variables declaration - do not modify
 	private ButtonGroup buttonGroup;
 	private JSeparator separator;
 	private JLabel grayscaleLabel;
@@ -210,5 +218,5 @@ public class GrayScaleFrame {
 	private JButton applyButton;
 	private JButton cancelButton;
 	private JButton okButton;
-	// End of variables declaration 
+	// End of variables declaration
 }

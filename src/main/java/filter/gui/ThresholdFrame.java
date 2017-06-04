@@ -34,14 +34,14 @@ public class ThresholdFrame {
 	private File chooserDirectory;
 	private String pathToPhotos;
 	private Filter filter;
-	
+
 	private static List<BufferedImage> bufferedImageList;
 	private static List<String> name;
 	private static int index;
-	
+
 	private BufferedImage filteredPhoto;
-    private List<BufferedImage> filteredImageList;
-	
+	private List<BufferedImage> filteredImageList;
+
 	/**
 	 * Launch the application.
 	 */
@@ -68,9 +68,9 @@ public class ThresholdFrame {
 		fileChooser = new JFileChooser();
 		filteredImageList = new ArrayList<BufferedImage>();
 		initialize();
-		if(index != -1) {
+		if (index != -1) {
 			displayPhoto(ThresholdFrame.bufferedImageList.get(index));
-		}	
+		}
 	}
 
 	/**
@@ -84,93 +84,92 @@ public class ThresholdFrame {
 		frame.setBounds(100, 100, 424, 474);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		separator = new JSeparator();
 		separator.setBounds(0, 37, 419, 2);
 		frame.getContentPane().add(separator);
-		
+
 		buttonGroup = new ButtonGroup();
-		
+
 		imageLabel = new JLabel("");
 		imageLabel.setBackground(Color.WHITE);
 		imageLabel.setOpaque(true);
 		imageLabel.setBounds(10, 50, 400, 249);
 		frame.getContentPane().add(imageLabel);
-		
+
 		algorithmLabel = new JLabel("Algorithm:");
 		algorithmLabel.setBounds(10, 310, 53, 14);
 		frame.getContentPane().add(algorithmLabel);
-		
+
 		algorithmComboBox = new JComboBox<String>();
 		algorithmComboBox.setToolTipText("Choose algorithm");
-		algorithmComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Compute otsu", "Compute entropy", "Local Gaussian", "Local Sauvola"}));
+		algorithmComboBox.setModel(new DefaultComboBoxModel<String>(
+				new String[] { "Compute otsu", "Compute entropy", "Local Gaussian", "Local Sauvola" }));
 		algorithmComboBox.setBounds(73, 307, 115, 18);
 		frame.getContentPane().add(algorithmComboBox);
-		
+
 		applyRadioButton = new JRadioButton("Apply on current image");
 		applyRadioButton.setOpaque(false);
 		applyRadioButton.setBounds(6, 336, 157, 23);
 		frame.getContentPane().add(applyRadioButton);
 		buttonGroup.add(applyRadioButton);
 		applyRadioButton.setSelected(true);
-		
+
 		applyAllRadioButton = new JRadioButton("Apply on all images");
 		applyAllRadioButton.setOpaque(false);
 		applyAllRadioButton.setBounds(6, 362, 157, 23);
 		frame.getContentPane().add(applyAllRadioButton);
 		buttonGroup.add(applyAllRadioButton);
-		
+
 		saveAsButton = new JButton("Save as...");
 		saveAsButton.setBounds(10, 400, 89, 23);
 		frame.getContentPane().add(saveAsButton);
-		
+
 		applyButton = new JButton("Apply");
 		applyButton.setBounds(113, 400, 89, 23);
 		frame.getContentPane().add(applyButton);
-		
+
 		cancelButton = new JButton("Cancel");
 		cancelButton.setBounds(219, 400, 89, 23);
 		frame.getContentPane().add(cancelButton);
-		
+
 		okButton = new JButton("Ok");
 		okButton.setBounds(321, 400, 89, 23);
 		frame.getContentPane().add(okButton);
-		
+
 		lblThresholding = new JLabel("Thresholding");
 		lblThresholding.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblThresholding.setBounds(10, 11, 103, 20);
 		frame.getContentPane().add(lblThresholding);
-		
+
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (applyRadioButton.isSelected()) {
 					frame.dispose();
-			    }
-				else if (applyAllRadioButton.isSelected()) {
-			    	frame.dispose();
-			    }
+				} else if (applyAllRadioButton.isSelected()) {
+					frame.dispose();
+				}
 			}
 		});
-		
+
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				frame.dispose();
 			}
 		});
-		
+
 		applyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				filter = new Filter(index, bufferedImageList, algorithmComboBox.getSelectedItem().toString(), 0);
 				if (applyRadioButton.isSelected()) {
 					filteredPhoto = filter.thresholdFilterImage();
 					displayPhoto(filteredPhoto);
-		        } 
-				else if (applyAllRadioButton.isSelected()) {
-					 filteredImageList = filter.thresholdFilterImages();
-		        }	
+				} else if (applyAllRadioButton.isSelected()) {
+					filteredImageList = filter.thresholdFilterImages();
+				}
 			}
 		});
-		
+
 		saveAsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -179,29 +178,32 @@ public class ThresholdFrame {
 				pathToPhotos = chooserDirectory.getPath();
 
 				Save save = new Save(index, filteredPhoto, filteredImageList, name, pathToPhotos);
-				if(chooserDirectory != null) {
-					if(applyAllRadioButton.isSelected()) {
+				if (chooserDirectory != null) {
+					if (applyAllRadioButton.isSelected()) {
 						save.saveImages();
 					} else {
 						save.saveImage();
 					}
-				}		
+				}
 			}
 		});
 	}
-	
+
 	/**
-	 * Other methods.
+	 * Method for displaying selected image.
+	 * 
+	 * @param filteredPhoto
+	 *            selected image
 	 */
-    private void displayPhoto(BufferedImage filteredPhoto) {
-    	ImageIcon image = new ImageIcon(filteredPhoto);
+	private void displayPhoto(BufferedImage filteredPhoto) {
+		ImageIcon image = new ImageIcon(filteredPhoto);
 		Image img = image.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
 				Image.SCALE_SMOOTH);
 		imageLabel.setIcon(new ImageIcon(img));
-    }
-   
-    // Variables declaration - do not modify 
-    private ButtonGroup buttonGroup;
+	}
+
+	// Variables declaration - do not modify
+	private ButtonGroup buttonGroup;
 	private JSeparator separator;
 	private JLabel imageLabel;
 	private JLabel algorithmLabel;
@@ -213,6 +215,5 @@ public class ThresholdFrame {
 	private JButton cancelButton;
 	private JButton okButton;
 	private JLabel lblThresholding;
-	// End of variables declaration 
+	// End of variables declaration
 }
-
